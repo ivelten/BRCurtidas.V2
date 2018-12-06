@@ -12,5 +12,5 @@ module HttpHandlers =
 
     let app : HttpHandler =
         choose [
-            route  "/" >=> razorView "text/html" "Index" (Some model) None
+            route "/" >=> razorHtmlView "Index" (Some model) None
         ]
