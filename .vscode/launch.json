@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Start Web App",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/BRCurtidas.V2.WebApp/bin/Debug/netcoreapp2.2/BRCurtidas.V2.WebApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/BRCurtidas.V2.WebApp/bin/Debug/netcoreapp2.2",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

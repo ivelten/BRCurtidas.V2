@@ -1,21 +1,28 @@
 namespace BRCurtidas.V2.WebApp
 
 open System
+open System.IO
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
+open Giraffe
+open Giraffe.Razor
+open Microsoft.Extensions.Logging
 
 type Startup() =
+    member __.ConfigureServices(services: IServiceCollection) =
+        let sp  = services.BuildServiceProvider()
+        let env = sp.GetService<IHostingEnvironment>()
+        Path.Combine(env.ContentRootPath, "Views")
+        |> services.AddRazorEngine
+        |> ignore
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-    member this.ConfigureServices(services: IServiceCollection) =
-        ()
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    member this.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
+    member __.Configure(app: IApplicationBuilder, env: IHostingEnvironment) =
+        let errorHandler (ex : Exception) (log : ILogger) =
+            log.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+            clearResponse >=> setStatusCode 500
         if env.IsDevelopment() then 
             app.UseDeveloperExceptionPage() |> ignore
-
-        app.Run(fun context -> context.Response.WriteAsync("Hello World!")) |> ignore
+        app
+            .UseGiraffeErrorHandler(errorHandler)
+            .UseGiraffe(HttpHandlers.app)
